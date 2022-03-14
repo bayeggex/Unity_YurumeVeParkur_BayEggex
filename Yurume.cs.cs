@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Yurume : MonoBehaviour {
+public class yurume : MonoBehaviour {
 
     public Transform OyuncuKamera;
     public Transform oryantasyon;
@@ -81,7 +81,7 @@ public class Yurume : MonoBehaviour {
         transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
         if (rb.velocity.magnitude > 0.5f) {
             if (grounded) {
-                rb.AddForce(orientation.transform.forward * slideForce);
+                rb.AddForce(oryantasyon.transform.forward * slideForce);
             }
         }
     }
@@ -128,8 +128,8 @@ public class Yurume : MonoBehaviour {
         
         if (grounded && crouching) multiplierV = 0f;
 
-        rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
-        rb.AddForce(orientation.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
+        rb.AddForce(oryantasyon.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
+        rb.AddForce(oryantasyon.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
     }
 
     private void Jump() {
@@ -161,7 +161,7 @@ public class Yurume : MonoBehaviour {
         float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
 
         //Mevcut görünüm rotasyonunu bulma sistemi falan
-        Vector3 rot = playerCam.transform.localRotation.eulerAngles;
+        Vector3 rot = OyuncuKamera.transform.localRotation.eulerAngles;
         desiredX = rot.y + mouseX;
         
        
@@ -169,8 +169,8 @@ public class Yurume : MonoBehaviour {
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         
-        playerCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
-        orientation.transform.localRotation = Quaternion.Euler(0, desiredX, 0);
+        OyuncuKamera.transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
+        oryantasyon.transform.localRotation = Quaternion.Euler(0, desiredX, 0);
     }
 
     private void CounterMovement(float x, float y, Vector2 mag) {
@@ -184,10 +184,10 @@ public class Yurume : MonoBehaviour {
 
       
         if (Math.Abs(mag.x) > threshold && Math.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0)) {
-            rb.AddForce(moveSpeed * orientation.transform.right * Time.deltaTime * -mag.x * counterMovement);
+            rb.AddForce(moveSpeed * oryantasyon.transform.right * Time.deltaTime * -mag.x * counterMovement);
         }
         if (Math.Abs(mag.y) > threshold && Math.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0)) {
-            rb.AddForce(moveSpeed * orientation.transform.forward * Time.deltaTime * -mag.y * counterMovement);
+            rb.AddForce(moveSpeed * oryantasyon.transform.forward * Time.deltaTime * -mag.y * counterMovement);
         }
         
        
@@ -200,7 +200,7 @@ public class Yurume : MonoBehaviour {
 
    
     public Vector2 FindVelRelativeToLook() {
-        float lookAngle = orientation.transform.eulerAngles.y;
+        float lookAngle = oryantasyon.transform.eulerAngles.y;
         float moveAngle = Mathf.Atan2(rb.velocity.x, rb.velocity.z) * Mathf.Rad2Deg;
 
         float u = Mathf.DeltaAngle(lookAngle, moveAngle);
@@ -229,7 +229,7 @@ public class Yurume : MonoBehaviour {
         
         for (int i = 0; i < other.contactCount; i++) {
             Vector3 normal = other.contacts[i].normal;
-            //FLOOR
+            
             if (IsFloor(normal)) {
                 grounded = true;
                 cancellingGrounded = false;
